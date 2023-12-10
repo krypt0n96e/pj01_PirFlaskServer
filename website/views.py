@@ -39,14 +39,18 @@ def home():
             device_ids = [int(id) for id in device_ids_param.split(',')]
         else:
             device_ids = [1]  # Hoặc có thể cung cấp giá trị mặc định nếu 'id' không tồn tại
-    logs=[]
     for device_id in device_ids:
         log = device1.query.filter_by(id=device_id).first()
         if not log:
             db.session.add(device1(logs=0, id=device_id))
         db.session.commit()
-        logs.append(log)
-    return render_template("home.html", log=logs)
+    # logs=[]
+    # for device_id in device_ids:
+    #     log = device1.query.filter_by(id=device_id).first()
+    #     logs.append(log)
+    logs = device1.query.all()
+    
+    return render_template("home.html", logs=logs)
 
 @views.route('/delete-data', methods=['POST'])
 def delete_data():  
@@ -79,6 +83,18 @@ def reset_all():
             db.session.delete(device)
         db.session.commit()
         flash('All device reseted!', category='success')
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    return jsonify({})
+
+@views.route('/turn-on-all', methods=['POST'])
+def turn_on_all():  
+    try:
+        device_objects = device1.query.all()
+        for device in device_objects:
+            device.logs = 1  # Gán giá trị 1 cho logs (đặt tình trạng bật)
+        db.session.commit()
+        flash('All devices turned on!', category='success')
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     return jsonify({})

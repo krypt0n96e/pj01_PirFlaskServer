@@ -225,6 +225,17 @@ function exportAllData() {
   });
 }
 
+function turnOnAllDevices() {
+  fetch("/turn-on-all", {
+    method: "POST",
+    body: "200",
+  }).then((_res) => {
+    window.location.href = "/";
+  });
+}
+
+
+
 function toggleChange(device_id) {
   // Lấy tham chiếu đến phần tử checkbox và phần tử hiển thị trạng thái
   var devideSw = document.getElementById('deviceSw' + device_id);
