@@ -187,21 +187,6 @@ function closeAlert(button) {
   }
 }
 
-function toggleChange(log) {
-  // Lấy tham chiếu đến phần tử checkbox và phần tử hiển thị trạng thái
-  var devideSw = document.getElementById("devideSw");
-  // Thêm sự kiện thay đổi
-  devideSw.addEventListener("change", function () {
-    if (devideSw.checked) {
-      statusChange(1);
-    } else {
-      statusChange(0);
-    }
-  });
-}
-
-
-
 function deleteData(dataId) {
   fetch("/delete-data", {
     method: "POST",
@@ -213,6 +198,14 @@ function deleteData(dataId) {
 
 function deleteAllData() {
   fetch("/delete-all", {
+    method: "POST",
+    body: "200",
+  }).then((_res) => {
+    window.location.href = "/";
+  });
+}
+function resetAllDevice() {
+  fetch("/reset-all", {
     method: "POST",
     body: "200",
   }).then((_res) => {
@@ -232,11 +225,44 @@ function exportAllData() {
   });
 }
 
-function statusChange(log) {
-  fetch("/status-change", {
-    method: "POST",
-    body: JSON.stringify({ log: log }),
-  }).then((_res) => {
-    window.location.href = "/";
+function toggleChange(device_id) {
+  // Lấy tham chiếu đến phần tử checkbox và phần tử hiển thị trạng thái
+  var devideSw = document.getElementById('deviceSw' + device_id);
+  // Thêm sự kiện thay đổi
+  devideSw.addEventListener("change", function () {
+    if (devideSw.checked) {
+      statusChange(1,device_id);
+    } else {
+      statusChange(0,device_id);
+    }
   });
 }
+// Function to handle status change
+function statusChange(log, device_id) {
+  $.ajax({
+    url: '/status-change',
+    method: 'POST',
+    data: JSON.stringify({ log: log, device_id: device_id }),
+    contentType: 'application/json',
+    success: function () {
+      console.log('Status changed successfully.');
+
+      // Update the status element based on the new log value
+      var statusElement = document.getElementById('status' + device_id);
+
+      if (statusElement) {
+        if (log) {
+          statusElement.textContent = 'Status: ON';
+        } else {
+          statusElement.textContent = 'Status: OFF';
+        }
+      } else {
+        console.error('Status element not found for device ID: ' + device_id);
+      }
+    },
+    error: function (error) {
+      console.error('Error changing status:', error);
+    }
+  });
+}
+

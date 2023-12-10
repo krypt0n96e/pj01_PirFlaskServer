@@ -71,7 +71,7 @@ input:checked + .slider:before {
   transform: translateX(26px);
 }
 
-#status {
+.status {
   margin-top: 10px;
   font-weight: bold;
   font-size: 23px;

@@ -6,22 +6,47 @@ import json
 views = Blueprint('views', __name__)
 
 
+# @views.route('/', methods=['GET', 'POST'])
+# def home():
+#     if request.method == 'GET':#HOST?id=[1,2,3]
+#         device_ids=#hay giup toi gan gia tri truyen qua get vao mang deviceid
+#     else: device_ids = [1, 2]
+#     for device_id in device_ids:
+#         log = device1.query.filter_by(id=device_id).first()
+#         if not log:
+#             db.session.add(device1(logs=0, id=device_id))  # Fix: add id=device_id
+#         db.session.commit()
+#     # if request.method == 'POST': 
+#     #     rawdata = request.form.get('data')#Gets the data from the HTML
+#     #     rawid = request.form.get('device_id')#Gets the id from the HTML 
+#     #     data = data1(data=rawdata,device_id=rawid)  #providing the schema for the data
+#     #     db.session.add(data) #adding the data to the database 
+#     #     db.session.commit()
+#     #     flash('Data added!', category='success')
+#     # datas = data1.query.all()  # Retrieve all datas from the database
+
+#     logs = device1.query.all()
+#     return render_template("home.html", log=logs)
 @views.route('/', methods=['GET', 'POST'])
 def home():
-    log1=device1.query.filter_by(id=1).first()
-    if not log1:
-        db.session.add(device1(logs=0)) #adding the data to the database 
-    db.session.commit()
-    if request.method == 'POST': 
-        rawdata = request.form.get('data')#Gets the data from the HTML
-        rawid = request.form.get('device_id')#Gets the id from the HTML 
-        data = data1(data=rawdata,device_id=rawid)  #providing the schema for the data
-        db.session.add(data) #adding the data to the database 
-        db.session.commit()
-        flash('Data added!', category='success')
-    datas = data1.query.all()  # Retrieve all datas from the database
-    return render_template("home.html", datas=datas, log=log1)
+    if request.method == 'GET':#HOST?id=id1,id2
+        # Lấy giá trị của 'id' từ query string
+        device_ids_param = request.args.get('id')
 
+        # Kiểm tra nếu 'id' tồn tại trong query string
+        if device_ids_param:
+            # Chuyển đổi giá trị 'id' từ chuỗi thành list
+            device_ids = [int(id) for id in device_ids_param.split(',')]
+        else:
+            device_ids = [1]  # Hoặc có thể cung cấp giá trị mặc định nếu 'id' không tồn tại
+    logs=[]
+    for device_id in device_ids:
+        log = device1.query.filter_by(id=device_id).first()
+        if not log:
+            db.session.add(device1(logs=0, id=device_id))
+        db.session.commit()
+        logs.append(log)
+    return render_template("home.html", log=logs)
 
 @views.route('/delete-data', methods=['POST'])
 def delete_data():  
@@ -46,10 +71,26 @@ def delete_all():
         return jsonify({"error": str(e)}), 500
     return jsonify({})
 
+@views.route('/reset-all', methods=['POST'])
+def reset_all():  
+    try:
+        decive_objects = device1.query.all()
+        for device in decive_objects:
+            db.session.delete(device)
+        db.session.commit()
+        flash('All device reseted!', category='success')
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    return jsonify({})
+
 @views.route('/status-change', methods=['POST'])
 def status_change():
-    log = json.loads(request.data)
-    req=device1.query.filter_by(id=1).first()
-    req.logs=log['log']
+    data = json.loads(request.data)
+    device_id = data['device_id']
+    log = data['log']
+
+    req = device1.query.filter_by(id=device_id).first()
+    req.logs = log
     db.session.commit()
+
     return jsonify({})
