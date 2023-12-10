@@ -3,6 +3,7 @@ from .models import data1, device1
 from . import db
 from datetime import datetime
 import csv
+import os
 import requests
 
 # Tạo một Blueprint trong Flask
@@ -14,7 +15,7 @@ def export_csv():
     datas = data1.query.all()
 
     # Kiểm tra nếu có ít nhất 1000 dòng dữ liệu
-    if len(datas) >= 10:
+    if len(datas) >= 1:
         # Tạo một danh sách để chứa dữ liệu cho CSV
         csv_data = []
 
@@ -28,7 +29,15 @@ def export_csv():
 
         # Generate a timestamp for the filename
         timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-        csv_filename = f'exported_data_{timestamp}.csv'
+        
+        # Define the folder path
+        export_folder = 'export_data'
+        
+        # Ensure the export folder exists
+        os.makedirs(export_folder, exist_ok=True)
+
+        # Specify the CSV file path
+        csv_filename = os.path.join(export_folder, f'exported_data_{timestamp}.csv')
 
         # Mở file CSV để ghi
         with open(csv_filename, 'w', newline='') as csvfile:
