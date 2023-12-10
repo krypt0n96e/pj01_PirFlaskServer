@@ -29,15 +29,19 @@ def esp_handle():
         except Exception as e:
             print("Error:", str(e))
             return "error"
-    elif request.method == 'GET': #HOST/esp?start=value&end=value
+    elif request.method == 'GET': #HOST/esp?start=value&end=value&&id=value
         start_id = request.args.get('start', type=int)
         end_id = request.args.get('end', type=int)
+        device_id_filter = request.args.get('id', type=int)
 
         # Use the provided values or set defaults if not present
         start_id = start_id if start_id is not None else 0
         end_id = end_id if end_id is not None else float('inf')
 
-        datas = data1.query.filter(and_(data1.id >= start_id, data1.id <= end_id)).all()
+        if device_id_filter is not None:
+            datas = data1.query.filter(and_(data1.id >= start_id, data1.id <= end_id, data1.device_id == device_id_filter)).all()
+        else:
+            datas = data1.query.filter(and_(data1.id >= start_id, data1.id <= end_id)).all()
 
         if datas:
             data_list = [{"id": entry.id, "data": entry.data, "date": entry.date, "device_id": entry.device_id} for entry in datas]

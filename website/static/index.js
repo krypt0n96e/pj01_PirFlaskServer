@@ -25,17 +25,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Func making chart
   // Declare a global variable to store the chart instance
-  // Declare a global variable to store the chart instance
   var myChart;
 
   // Function to draw the line chart
   function drawLineChart(labels, data) {
     var ctx = document.getElementById('myChart').getContext('2d');
-  
+
     // Calculate min and max values for the x-axis
     var xMin = Math.min(...labels);
     var xMax = Math.max(...labels);
-  
+
     // Check if the chart instance exists
     if (myChart) {
       // If it does, update the chart data and labels
@@ -46,9 +45,9 @@ document.addEventListener("DOMContentLoaded", function () {
       myChart.update(); // Update the chart
     } else {
       // If the chart instance doesn't exist, create a new chart
-      console.log('Labels:', labels);
-      console.log('Data:', data);
-  
+      // console.log('Labels:', labels);
+      // console.log('Data:', data);
+
       myChart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -79,26 +78,25 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
   }
-  
 
 
+  // Add an event listener for the change event of the deviceIdSelect
+  document.getElementById('deviceIdSelect').addEventListener('change', fetchDataAndPopulateTable);
 
   // AJAX request to fetch data and update the table
   function fetchDataAndPopulateTable() {
+    // Get the selected device ID from the select element
+    var selectedDeviceId = document.getElementById('deviceIdSelect').value;
+
     $.ajax({
-      url: '/esp',
+      url: '/esp?id=' + selectedDeviceId, // Pass the selectedDeviceId as a query parameter
       method: 'GET',
       success: function (rawData) {
-
-
-
         // Sort rawData based on the date in descending order
         rawData.sort(function (a, b) {
           return b.id - a.id;
         });
 
-        // Only display the top 100 entries
-        var topTable = rawData.slice(0, 50);
         var topChart = rawData.slice(0, 5);
 
         // Parse and process the data
@@ -110,13 +108,13 @@ document.addEventListener("DOMContentLoaded", function () {
           });
           return data;
         });
+    
 
         // Flatten the array of arrays
         const flatData = parsedData.reduce((acc, val) => acc.concat(val), []);
         // Sort the flattened data based on time from smallest to largest
         flatData.sort((a, b) => a.time - b.time);
 
-        updateTable(topTable);
         // Assuming rawData is your array of data objects
         var labels = flatData.map(entry => entry.time);
         var values = flatData.map(entry => entry.value);
@@ -129,14 +127,32 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error('Error fetching data:', error);
       }
     });
+    $.ajax({
+      url: '/esp',
+      method: 'GET',
+      success: function (rawData) {
+        // Sort rawData based on the date in descending order
+        rawData.sort(function (a, b) {
+          return b.id - a.id;
+        });
+
+        // Only display the top 100 entries
+        var topTable = rawData.slice(0, 50);
+        updateTable(topTable);
+      },
+      error: function (error) {
+        console.error('Error fetching data:', error);
+      }
+    });
   }
 
   // Call the function to fetch data and populate the table on page load
   fetchDataAndPopulateTable();
 
   // Optionally, set up a timer to update the table periodically
-  setInterval(fetchDataAndPopulateTable, 1000); // Update every 500 milliseconds
+  setInterval(fetchDataAndPopulateTable, 3000); // Update every 500 milliseconds
 });
+
 // //phan giup autoreload page
 // document.addEventListener('DOMContentLoaded', function () {
 //   var reloadCheck = document.getElementById('reloadCheck');
@@ -242,9 +258,9 @@ function toggleChange(device_id) {
   // Thêm sự kiện thay đổi
   devideSw.addEventListener("change", function () {
     if (devideSw.checked) {
-      statusChange(1,device_id);
+      statusChange(1, device_id);
     } else {
-      statusChange(0,device_id);
+      statusChange(0, device_id);
     }
   });
 }

@@ -51,6 +51,15 @@
 
   <div class="flex-item">
     <canvas id="myChart" width="600" height="300"></canvas>
+    <div class="top text-center">
+      <label for="deviceIdSelect">Select Device ID:</label>
+      <select id="deviceIdSelect" class="form-select" onchange="fetchDataAndPopulateTable()">
+        {% for single_log in logs %}
+          <option value="{{ single_log.id }}">{{ single_log.id }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    
   </div>
 </div>
 
