@@ -71,3 +71,30 @@ def device_logs():
             devices = device1.query.all()
             device_list = [{"id": entry.id, "logs": entry.logs} for entry in devices]
             return jsonify(device_list), 200
+
+
+@esphandle.route('/assign', methods=['GET'])
+def device_assign():
+    if request.method == 'GET':
+        # Extract the 'id' parameter from the query string
+        device_id = request.args.get('id', type=int)
+
+        if device_id is not None:
+            # Check if a device with the given ID already exists
+            device = device1.query.filter_by(id=device_id).first()
+
+            if device:
+                # If the device already exists, return an error response
+                return jsonify({'is_existed': 1, 'log': 'Assign failed!'}),409
+            else:
+                # If the device doesn't exist, add it to the database and commit the changes
+                db.session.add(device1(logs=0, id=device_id))
+                db.session.commit()
+                # Return a success response
+                return jsonify({'is_existed': 0, 'log': 'Assign successful!'}), 200
+        else:
+            # Handle the case where the 'id' parameter is not provided in the request
+            return jsonify({'error': 'Invalid get request!'}),400
+
+                           
+            
