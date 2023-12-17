@@ -160,6 +160,18 @@ function deleteAllData() {
     window.location.href = "/";
   });
 }
+
+function deleteDevice(device_id) {
+  fetch("/delete-device", {
+    method: "POST",
+    body: JSON.stringify({ id: device_id }),
+  }).then((_res) => {
+    window.location.href = "/";
+  });
+}
+
+
+
 function resetAllDevice() {
   fetch("/reset-all", {
     method: "POST",

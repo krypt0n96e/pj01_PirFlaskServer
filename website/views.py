@@ -87,6 +87,17 @@ def reset_all():
         return jsonify({"error": str(e)}), 500
     return jsonify({})
 
+@views.route('/delete-device', methods=['POST'])
+def delete_device():  
+    data = json.loads(request.data)
+    device_id = data['id']
+    device = device1.query.get(device_id)
+    if device:
+        db.session.delete(device)
+        db.session.commit()
+    flash('Device deleted!', category='success')
+    return jsonify({})
+
 @views.route('/turn-on-all', methods=['POST'])
 def turn_on_all():  
     try:

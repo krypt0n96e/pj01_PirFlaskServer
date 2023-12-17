@@ -34,6 +34,15 @@
       <div id="status{{single_log.id}}" class="status">Status: OFF</div>
       {% endif %}
     </div>
+    <div>
+      <button
+        type="button"
+        class="btn btn-danger"
+        onClick="deleteDevice({{single_log.id}})"
+      >
+        Delete
+      </button>
+    </div>
   </div>
   {% endfor %}
 
@@ -53,13 +62,16 @@
     <canvas id="myChart" width="600" height="300"></canvas>
     <div class="top text-center">
       <label for="deviceIdSelect">Select Device ID:</label>
-      <select id="deviceIdSelect" class="form-select" onchange="fetchDataAndPopulateTable()">
+      <select
+        id="deviceIdSelect"
+        class="form-select"
+        onchange="fetchDataAndPopulateTable()"
+      >
         {% for single_log in logs %}
-          <option value="{{ single_log.id }}">{{ single_log.id }}</option>
+        <option value="{{ single_log.id }}">{{ single_log.id }}</option>
         {% endfor %}
       </select>
     </div>
-    
   </div>
 </div>
 
