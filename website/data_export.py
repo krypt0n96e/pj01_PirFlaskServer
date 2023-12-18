@@ -86,7 +86,7 @@ def export_csv():
                 processed_data = process_and_split_data(data.data)
 
                 # Add to the list with 'Device ID'
-                csv_data.extend([(time, value, data.device_id) for time, value in processed_data])
+                csv_data.extend([(time, value) for time, value in processed_data])
 
             # Generate a timestamp for the filename
             timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
@@ -106,7 +106,7 @@ def export_csv():
                 csv_writer = csv.writer(csvfile)
 
                 # Write header
-                csv_writer.writerow(['TIME', 'VALUE', 'Device ID'])
+                csv_writer.writerow(['TIME', 'VALUE'])
 
                 # Write data to the file
                 csv_writer.writerows(csv_data)
