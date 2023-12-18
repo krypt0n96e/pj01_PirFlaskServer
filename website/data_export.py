@@ -10,62 +10,124 @@ import requests
 data_export = Blueprint('data_export', __name__)
 
 @data_export.route('/export', methods=['GET'])
+# def export_csv():
+#     # Lấy tất cả dữ liệu từ bảng data1
+#     datas = data1.query.all()
+
+#     # Kiểm tra nếu có ít nhất 1000 dòng dữ liệu
+#     if len(datas) >= 1:
+#         # Tạo một danh sách để chứa dữ liệu cho CSV
+#         csv_data = []
+
+#         # Lặp qua các dòng dữ liệu và thêm chúng vào danh sách
+#         for data in datas:
+#             # Xử lý mã hóa và tách thành cặp (x, y)
+#             processed_data = process_and_split_data(data.data)
+
+#             # Thêm vào danh sách
+#             csv_data.extend([(time, value, data.device_id) for time, value in processed_data])
+
+#         # Generate a timestamp for the filename
+#         timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+        
+#         # Define the folder path
+#         export_folder = 'export_data'
+        
+#         # Ensure the export folder exists
+#         os.makedirs(export_folder, exist_ok=True)
+
+#         # Specify the CSV file path
+#         csv_filename = os.path.join(export_folder, f'exported_data_{timestamp}.csv')
+
+#         # Mở file CSV để ghi
+#         with open(csv_filename, 'w', newline='') as csvfile:
+#             # Sử dụng CSV writer để ghi dữ liệu vào file
+#             csv_writer = csv.writer(csvfile)
+
+#             # Ghi header nếu cần thiết
+#             csv_writer.writerow(['TIME', 'VALUE', 'Device ID'])
+
+#             # Ghi dữ liệu vào file
+#             csv_writer.writerows(csv_data)
+        
+#         # Make a POST request to /delete_all
+#         delete_all_response = requests.post('http://127.0.0.1:8888/delete-all')
+
+#         # Check if the delete_all request was successful
+#         if delete_all_response.status_code == 200:
+#             # If successful, return a JSON response with success and filename
+#             flash('Data exported!', category='success')
+#             return jsonify({'success': True, 'filename': csv_filename})
+#         else:
+#             # If not successful, return a JSON response with an error message
+#             flash('Failed to delete all data after export!', category='error')
+#             return jsonify({'success': False, 'message': 'Failed to delete all data after export'})
+#     else:
+#         # Trả về thông báo nếu không đủ dữ liệu
+#         flash('Not enough data to export CSV!', category='error')
+#         return jsonify({'success': False, 'message': 'Not enough data to export CSV'})
 def export_csv():
-    # Lấy tất cả dữ liệu từ bảng data1
-    datas = data1.query.all()
+    # Get all devices
+    devices = device1.query.all()
+    data_success_count=0
+    # Loop through each device
+    for device in devices:
+        # Get data for the current device
+        datas = data1.query.filter_by(device_id=device.id).all()
 
-    # Kiểm tra nếu có ít nhất 1000 dòng dữ liệu
-    if len(datas) >= 1:
-        # Tạo một danh sách để chứa dữ liệu cho CSV
-        csv_data = []
+        # Check if there is at least 1 record
+        if len(datas) >= 1:
+            # Create a list to store data for CSV
+            csv_data = []
 
-        # Lặp qua các dòng dữ liệu và thêm chúng vào danh sách
-        for data in datas:
-            # Xử lý mã hóa và tách thành cặp (x, y)
-            processed_data = process_and_split_data(data.data)
+            # Loop through the data records and add them to the list
+            for data in datas:
+                # Process and split the data into (time, value) pairs
+                processed_data = process_and_split_data(data.data)
 
-            # Thêm vào danh sách
-            csv_data.extend([(time, value, data.device_id) for time, value in processed_data])
+                # Add to the list with 'Device ID'
+                csv_data.extend([(time, value, data.device_id) for time, value in processed_data])
 
-        # Generate a timestamp for the filename
-        timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-        
-        # Define the folder path
-        export_folder = 'export_data'
-        
-        # Ensure the export folder exists
-        os.makedirs(export_folder, exist_ok=True)
+            # Generate a timestamp for the filename
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
 
-        # Specify the CSV file path
-        csv_filename = os.path.join(export_folder, f'exported_data_{timestamp}.csv')
+            # Define the folder path based on the device_id
+            export_folder = os.path.join('export_data', f'device_{device.id}')
 
-        # Mở file CSV để ghi
-        with open(csv_filename, 'w', newline='') as csvfile:
-            # Sử dụng CSV writer để ghi dữ liệu vào file
-            csv_writer = csv.writer(csvfile)
+            # Ensure the export folder exists
+            os.makedirs(export_folder, exist_ok=True)
 
-            # Ghi header nếu cần thiết
-            csv_writer.writerow(['TIME', 'VALUE', 'Device ID'])
+            # Specify the CSV file path
+            csv_filename = os.path.join(export_folder, f'exported_data_{timestamp}.csv')
 
-            # Ghi dữ liệu vào file
-            csv_writer.writerows(csv_data)
-        
+            # Open the CSV file for writing
+            with open(csv_filename, 'w', newline='') as csvfile:
+                # Use CSV writer to write data to the file
+                csv_writer = csv.writer(csvfile)
+
+                # Write header
+                csv_writer.writerow(['TIME', 'VALUE', 'Device ID'])
+
+                # Write data to the file
+                csv_writer.writerows(csv_data)
+            data_success_count=data_success_count+1
+    if data_success_count>0:
         # Make a POST request to /delete_all
-        delete_all_response = requests.post('http://127.0.0.1:8888/delete-all')
+        delete_all_response = requests.post(f'http://127.0.0.1:8888/delete-all')
 
         # Check if the delete_all request was successful
         if delete_all_response.status_code == 200:
             # If successful, return a JSON response with success and filename
-            flash('Data exported!', category='success')
+            flash(f'Data exported!', category='success')
             return jsonify({'success': True, 'filename': csv_filename})
         else:
             # If not successful, return a JSON response with an error message
-            flash('Failed to delete all data after export!', category='error')
-            return jsonify({'success': False, 'message': 'Failed to delete all data after export'})
+            flash(f'Failed to delete all data after export!', category='error')
+            return jsonify({'success': False, 'message': f'Failed to delete all data after export'})
     else:
-        # Trả về thông báo nếu không đủ dữ liệu
-        flash('Not enough data to export CSV!', category='error')
-        return jsonify({'success': False, 'message': 'Not enough data to export CSV'})
+        # Return a message if there is not enough data for the current device
+        flash(f'Not enough data to export CSV!', category='error')
+        return jsonify({'success': False, 'message': f'Not enough data to export CSV'})
 
 def process_and_split_data(data_str):
     # Giả sử dữ liệu có định dạng "?x1&y1?x2&y2"
