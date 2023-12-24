@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
       method: 'GET',
       success: function (rawData) {
         rawData.sort((a, b) => b.id - a.id);
-        var topChart = rawData.slice(0, 5);
+        var topChart = rawData.slice(0, 15);
 
         const parsedData = topChart.map(entry => {
           const items = entry.data.split('?').filter(Boolean);
@@ -170,8 +170,6 @@ function deleteDevice(device_id) {
   });
 }
 
-
-
 function resetAllDevice() {
   fetch("/reset-all", {
     method: "POST",
@@ -183,6 +181,14 @@ function resetAllDevice() {
 
 function turnOnAllDevices() {
   fetch("/turn-on-all", {
+    method: "POST",
+    body: "200",
+  }).then((_res) => {
+    window.location.href = "/";
+  });
+}
+function turnOffAllDevices() {
+  fetch("/turn-off-all", {
     method: "POST",
     body: "200",
   }).then((_res) => {
@@ -202,18 +208,20 @@ function exportAllData() {
   });
 }
 
+
 function toggleChange(device_id) {
   // Lấy tham chiếu đến phần tử checkbox và phần tử hiển thị trạng thái
-  var devideSw = document.getElementById('deviceSw' + device_id);
+  var deviceSw = document.getElementById('deviceSw' + device_id);
   // Thêm sự kiện thay đổi
-  devideSw.addEventListener("change", function () {
-    if (devideSw.checked) {
+  deviceSw.addEventListener("change", function () {
+    if (deviceSw.checked) {
       statusChange(1, device_id);
     } else {
       statusChange(0, device_id);
     }
   });
 }
+
 // Function to handle status change
 function statusChange(log, device_id) {
   $.ajax({
@@ -243,3 +251,54 @@ function statusChange(log, device_id) {
   });
 }
 
+// CAMERA FUNCTION
+function deleteCamera(camera_id) {
+  fetch("/delete-camera", {
+    method: "POST",
+    body: JSON.stringify({ id: camera_id }),
+  }).then((_res) => {
+    window.location.href = "/";
+  });
+}
+
+function cameraTurn(camera_id) {
+  // Lấy tham chiếu đến phần tử checkbox và phần tử hiển thị trạng thái
+  var cameraSw = document.getElementById('cameraSw' + camera_id);
+  // Thêm sự kiện thay đổi
+  cameraSw.addEventListener("change", function () {
+    if (cameraSw.checked) {
+      cameraTurnChange(1, camera_id);
+    } else {
+      cameraTurnChange(0, camera_id);
+    }
+  });
+}
+
+// Function to handle status change
+function cameraTurnChange(log_2, camera_id) {
+  $.ajax({
+    url: '/camera-turn',
+    method: 'POST',
+    data: JSON.stringify({ log_2: log_2, camera_id: camera_id }),
+    contentType: 'application/json',
+    success: function () {
+      console.log('Status changed successfully.');
+
+      // Update the status element based on the new log value
+      var statusElement = document.getElementById('camera' + camera_id);
+
+      if (statusElement) {
+        if (log_2) {
+          statusElement.textContent = 'Status: ON';
+        } else {
+          statusElement.textContent = 'Status: OFF';
+        }
+      } else {
+        console.error('Status element not found for camera ID: ' + camera_id);
+      }
+    },
+    error: function (error) {
+      console.error('Error changing status:', error);
+    }
+  });
+}

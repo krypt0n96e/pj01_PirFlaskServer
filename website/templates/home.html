@@ -13,38 +13,81 @@
 </div-->
 
 <div class="flex-container text-center">
-  {% for single_log in logs %}
-  <div class="flex-item">
-    <div>
-      <h2>Thiet bi {{single_log.id}}</h2>
-      {% if single_log.logs %}
-      <label class="toggle">
-        <input type="checkbox" id="deviceSw{{single_log.id}}" checked />
-        <span
-          class="slider slider-green"
-          onClick="toggleChange({{single_log.id}})"
-        ></span>
-      </label>
-      <div id="status{{single_log.id}}" class="status">Status: ON</div>
-      {% else %}
-      <label class="toggle">
-        <input type="checkbox" id="deviceSw{{single_log.id}}" />
-        <span class="slider" onClick="toggleChange({{single_log.id}})"></span>
-      </label>
-      <div id="status{{single_log.id}}" class="status">Status: OFF</div>
-      {% endif %}
+  <span>
+    <div class="flex-container text-center">
+      {% for single_log in logs %}
+      <div class="flex-item">
+        <div>
+          <h2>Thiet bi {{single_log.id}}</h2>
+          <label class="toggle">
+            <input
+              type="checkbox"
+              id="deviceSw{{single_log.id}}"
+              {%if
+              single_log.logs%}
+              checked
+              {%endif%}
+            />
+            <span
+              class="slider {% if single_log.logs %}slider-green{% endif %}"
+              onClick="toggleChange({{single_log.id}})"
+            ></span>
+          </label>
+          <div id="status{{single_log.id}}" class="status">
+            Status: {% if single_log.logs %}ON{% else %}OFF{% endif %}
+          </div>
+        </div>
+        <div>
+          <button
+            type="button"
+            class="btn btn-danger"
+            onClick="deleteDevice({{single_log.id}})"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+      {% endfor %}
     </div>
-    <div>
-      <button
-        type="button"
-        class="btn btn-danger"
-        onClick="deleteDevice({{single_log.id}})"
-      >
-        Delete
-      </button>
+
+    <div class="flex-container text-center">
+      {% for single_log_2 in logs_2 %}
+      <div class="flex-item">
+        <div>
+          <h2>Camera {{single_log_2.id}}</h2>
+          <label class="toggle">
+            <input
+              type="checkbox"
+              id="cameraSw{{single_log_2.id}}"
+              {%
+              if
+              single_log_2.logs
+              %}checked{%
+              endif
+              %}
+            />
+            <span
+              class="slider {% if single_log_2.logs %}slider-green{% endif %}"
+              onClick="cameraTurn({{single_log_2.id}})"
+            ></span>
+          </label>
+          <div id="camera{{single_log_2.id}}" class="status">
+            Status: {% if single_log_2.logs %}ON{% else %}OFF{% endif %}
+          </div>
+        </div>
+        <div>
+          <button
+            type="button"
+            class="btn btn-danger"
+            onClick="deleteCamera({{single_log_2.id}})"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+      {% endfor %}
     </div>
-  </div>
-  {% endfor %}
+  </span>
 
   <!--div class="flex-item">
     <div class="form-container">
@@ -79,17 +122,22 @@
 <div class="top text-center">
   <span>
     <button type="button" class="btn btn-danger" onClick="deleteAllData()">
-      Delete all
+      Delete all data
     </button>
   </span>
   <span>
     <button type="button" class="btn btn-danger" onClick="resetAllDevice()">
-      Reset all device
+      Delete all device
     </button>
   </span>
   <span>
     <button type="button" class="btn btn-success" onClick="turnOnAllDevices()">
-      Toggle All Devices
+      Toggle All On
+    </button>
+  </span>
+  <span>
+    <button type="button" class="btn btn-danger" onClick="turnOffAllDevices()">
+      Toggle All Off
     </button>
   </span>
   <span>

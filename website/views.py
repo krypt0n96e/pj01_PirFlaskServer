@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, jsonify
-from .models import data1,device1
+from .models import data1,device1,camera1
 from . import db
 import json
 
@@ -9,7 +9,7 @@ views = Blueprint('views', __name__)
 # @views.route('/', methods=['GET', 'POST'])
 # def home():
 #     if request.method == 'GET':#HOST?id=[1,2,3]
-#         device_ids=#hay giup toi gan gia tri truyen qua get vao mang deviceid
+#         device_ids=
 #     else: device_ids = [1, 2]
 #     for device_id in device_ids:
 #         log = device1.query.filter_by(id=device_id).first()
@@ -48,9 +48,17 @@ def home():
     # for device_id in device_ids:
     #     log = device1.query.filter_by(id=device_id).first()
     #     logs.append(log)
-    logs = device1.query.all()
     
-    return render_template("home.html", logs=logs)
+    if request.method == 'GET':
+        camera_ids = [1]
+    for camera_id in camera_ids:
+        log = camera1.query.filter_by(id=camera_id).first()
+        if not log:
+            db.session.add(camera1(logs=0, id=camera_id))
+            db.session.commit()
+    logs = device1.query.all()
+    logs_2=camera1.query.all()
+    return render_template("home.html", logs=logs,logs_2=logs_2)
 
 @views.route('/delete-data', methods=['POST'])
 def delete_data():  
@@ -106,6 +114,28 @@ def turn_on_all():
             device.logs = 1  # Gán giá trị 1 cho logs (đặt tình trạng bật)
         db.session.commit()
         flash('All devices turned on!', category='success')
+        camera_objects = camera1.query.all()
+        for camera in camera_objects:
+            camera.logs = 1  # Gán giá trị 1 cho logs (đặt tình trạng bật)
+        db.session.commit()
+        flash('All cameras turned on!', category='success')
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    return jsonify({})
+
+@views.route('/turn-off-all', methods=['POST'])
+def turn_on_off():  
+    try:
+        device_objects = device1.query.all()
+        for device in device_objects:
+            device.logs = 0
+        db.session.commit()
+        flash('All devices turned off!', category='success')
+        camera_objects = camera1.query.all()
+        for camera in camera_objects:
+            camera.logs = 0
+        db.session.commit()
+        flash('All cameras turned off!', category='success')
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     return jsonify({})
@@ -118,6 +148,30 @@ def status_change():
 
     req = device1.query.filter_by(id=device_id).first()
     req.logs = log
+    db.session.commit()
+
+    return jsonify({})
+
+@views.route('/delete-camera', methods=['POST'])
+def delete_camera():  
+    data = json.loads(request.data)
+    camera_id = data['id']
+    camera = camera1.query.get(camera_id)
+    if camera:
+        db.session.delete(camera)
+        db.session.commit()
+    flash('Camera deleted!', category='success')
+    return jsonify({})
+
+
+@views.route('/camera-turn', methods=['POST'])
+def camera_turn():
+    data = json.loads(request.data)
+    camera_id = data['camera_id']
+    log_2 = data['log_2']
+
+    req = camera1.query.filter_by(id=camera_id).first()
+    req.logs = log_2
     db.session.commit()
 
     return jsonify({})
