@@ -73,7 +73,7 @@ def export_csv():
     # Loop through each device
     for device in devices:
         # Get data for the current device
-        datas = data1.query.filter_by(device_id=device.id).all()
+        datas = data1.query.filter_by(mac_adr=device.mac_adr).all()
 
         # Check if there is at least 1 record
         if len(datas) >= 1:
@@ -85,14 +85,15 @@ def export_csv():
                 # Process and split the data into (time, value) pairs
                 processed_data = process_and_split_data(data.data)
 
-                # Add to the list with 'Device ID'
+                # Add to the list with 'Mac address'
                 csv_data.extend([(time, value) for time, value in processed_data])
 
             # Generate a timestamp for the filename
             timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
 
-            # Define the folder path based on the device_id
-            export_folder = os.path.join('export_data', f'device_{device.id}')
+            # Define the folder path based on the Mac address
+            # export_folder = os.path.join('export_data', f'device_{device.id}')
+            export_folder = os.path.join('export_data', f'{device.mac_adr}')
 
             # Ensure the export folder exists
             os.makedirs(export_folder, exist_ok=True)

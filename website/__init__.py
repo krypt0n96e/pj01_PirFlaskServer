@@ -47,5 +47,6 @@ def assign_camera():
     for device_id in device_ids:
         log = camera1.query.filter_by(id=device_id).first()
         if not log:
-            db.session.add(device1(logs=0, id=device_id))
+            db.session.add(camera1(logs=0, id=device_id))
         db.session.commit()
+    print("INIT CAMERA1")

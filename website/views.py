@@ -98,7 +98,7 @@ def reset_all():
 @views.route('/delete-device', methods=['POST'])
 def delete_device():  
     data = json.loads(request.data)
-    device_id = data['id']
+    device_id = data['device_id']
     device = device1.query.get(device_id)
     if device:
         db.session.delete(device)
@@ -155,7 +155,7 @@ def status_change():
 @views.route('/delete-camera', methods=['POST'])
 def delete_camera():  
     data = json.loads(request.data)
-    camera_id = data['id']
+    camera_id = data['camera_id']
     camera = camera1.query.get(camera_id)
     if camera:
         db.session.delete(camera)

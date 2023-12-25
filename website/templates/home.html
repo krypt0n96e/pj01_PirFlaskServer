@@ -18,7 +18,8 @@
       {% for single_log in logs %}
       <div class="flex-item">
         <div>
-          <h2>Thiet bi {{single_log.id}}</h2>
+          <h3>Thiet bi {{single_log.id}}</h3>
+          <h5>{{single_log.mac_adr}}</h5>
           <label class="toggle">
             <input
               type="checkbox"
@@ -54,7 +55,7 @@
       {% for single_log_2 in logs_2 %}
       <div class="flex-item">
         <div>
-          <h2>Camera {{single_log_2.id}}</h2>
+          <h3>Camera {{single_log_2.id}}</h3>
           <label class="toggle">
             <input
               type="checkbox"
@@ -101,7 +102,7 @@
     </div>
   </div-->
 
-  <div class="flex-item">
+  <!-- <div class="flex-item">
     <canvas id="myChart" width="600" height="300"></canvas>
     <div class="top text-center">
       <label for="deviceIdSelect">Select Device ID:</label>
@@ -112,6 +113,21 @@
       >
         {% for single_log in logs %}
         <option value="{{ single_log.id }}">{{ single_log.id }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div> -->
+  <div class="flex-item">
+    <canvas id="myChart" width="600" height="300"></canvas>
+    <div class="top text-center">
+      <label for="macSelect">Select Device ID:</label>
+      <select
+        id="macSelect"
+        class="form-select"
+        onchange="fetchDataAndPopulateTable()"
+      >
+        {% for single_log in logs %}
+        <option value="{{ single_log.mac_adr }}">{{ single_log.mac_adr }}</option>
         {% endfor %}
       </select>
     </div>
@@ -156,7 +172,8 @@
           <th scope="col">ID</th>
           <th scope="col">Data</th>
           <th scope="col">Date</th>
-          <th scope="col">Device_Id</th>
+          <!-- <th scope="col">Device_Id</th> -->
+          <th scope="col">Mac address</th>
           <th scope="col">Actions</th>
         </tr>
       </thead>

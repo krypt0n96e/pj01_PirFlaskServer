@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
         '<td>' + entry.id + '</td>' +
         rowData +
         '<td>' + entry.date + '</td>' +
-        '<td>' + entry.device_id + '</td>' +
+        '<td>' + entry.mac_adr+ '</td>' +
         '<td><button onclick="deleteData(' + entry.id + ')" class="btn btn-danger">Delete</button></td>' +
         '</tr>';
       tableBody.append(row);
@@ -66,15 +66,20 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Function to fetch chart data and populate the chart
+  // function fetchChartAndPopulate() {
+  //   var selectedDeviceId = document.getElementById('deviceIdSelect').value;
+
+  //   $.ajax({
+  //     url: '/esp?id=' + selectedDeviceId,
   function fetchChartAndPopulate() {
-    var selectedDeviceId = document.getElementById('deviceIdSelect').value;
+    var macAddress = document.getElementById('macSelect').value;
 
     $.ajax({
-      url: '/esp?id=' + selectedDeviceId,
+      url: '/esp?mac_adr=' + macAddress,
       method: 'GET',
       success: function (rawData) {
         rawData.sort((a, b) => b.id - a.id);
-        var topChart = rawData.slice(0, 15);
+        var topChart = rawData.slice(0, 10);
 
         const parsedData = topChart.map(entry => {
           const items = entry.data.split('?').filter(Boolean);
@@ -116,7 +121,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Event listener for the change event of the deviceIdSelect
-  document.getElementById('deviceIdSelect').addEventListener('change', function () {
+  document.getElementById('macSelect').addEventListener('change', function () {
     fetchChartAndPopulate();
     fetchTableAndPopulate();
   });
@@ -129,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function () {
   setInterval(function () {
     fetchChartAndPopulate();
     fetchTableAndPopulate();
-  }, 3000);
+  }, 1000);
 });
 
 
@@ -164,7 +169,7 @@ function deleteAllData() {
 function deleteDevice(device_id) {
   fetch("/delete-device", {
     method: "POST",
-    body: JSON.stringify({ id: device_id }),
+    body: JSON.stringify({ device_id: device_id }),
   }).then((_res) => {
     window.location.href = "/";
   });
@@ -255,7 +260,7 @@ function statusChange(log, device_id) {
 function deleteCamera(camera_id) {
   fetch("/delete-camera", {
     method: "POST",
-    body: JSON.stringify({ id: camera_id }),
+    body: JSON.stringify({ camera_id: camera_id }),
   }).then((_res) => {
     window.location.href = "/";
   });
