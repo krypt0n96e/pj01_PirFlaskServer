@@ -37,16 +37,3 @@ def create_database(app):
     if not path.exists('website/' + DB_NAME):
         db.create_all(app=app)
         print('Created Database!')
-        assign_camera()
-        
-        
-
-def assign_camera():
-    from models import camera1
-    device_ids = [1]
-    for device_id in device_ids:
-        log = camera1.query.filter_by(id=device_id).first()
-        if not log:
-            db.session.add(camera1(logs=0, id=device_id))
-        db.session.commit()
-    print("INIT CAMERA1")
