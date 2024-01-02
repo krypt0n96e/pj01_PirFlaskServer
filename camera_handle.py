@@ -43,8 +43,8 @@ def capture_images(output_folder):
             
             # Hiển thị thời gian trên ảnh
             cv2.putText(frame, current_time_str, (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
-            # cv2.putText(frame, f"{time.time():.3f}", (300, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
-            cv2.putText(frame, f"Webcam FPS: {fps}", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            cv2.putText(frame, f"{time.time():.3f}", (300, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+            # cv2.putText(frame, f"Webcam FPS: {fps}", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
             # Lưu ảnh vào thư mục
             cv2.imwrite(output_file, resized_frame)
