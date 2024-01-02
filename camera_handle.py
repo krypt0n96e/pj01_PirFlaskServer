@@ -33,7 +33,6 @@ def capture_images(output_folder):
         # Chờ 3 giây trước khi bắt đầu lưu ảnh
         if elapsed_time >= 3 and start_capture_time == 0:
             start_capture_time = time.time()
-
         # Chụp ảnh sau khi đã chờ 3 giây
         if start_capture_time > 0:
             count += 1
@@ -43,7 +42,9 @@ def capture_images(output_folder):
             resized_frame = cv2.resize(frame, (640, 480))
             
             # Hiển thị thời gian trên ảnh
-            cv2.putText(resized_frame, current_time_str, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            cv2.putText(frame, current_time_str, (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+            # cv2.putText(frame, f"{time.time():.3f}", (300, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+            cv2.putText(frame, f"Webcam FPS: {fps}", (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
             # Lưu ảnh vào thư mục
             cv2.imwrite(output_file, resized_frame)

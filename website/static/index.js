@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
       method: 'GET',
       success: function (rawData) {
         rawData.sort((a, b) => b.id - a.id);
-        var topChart = rawData.slice(0, 10);
+        var topChart = rawData.slice(0, 5);
 
         const parsedData = topChart.map(entry => {
           const items = entry.data.split('?').filter(Boolean);
