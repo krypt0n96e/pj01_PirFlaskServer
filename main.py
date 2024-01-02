@@ -2,7 +2,7 @@ from multiprocessing import Process,Lock
 from flask_server import run_flask
 from export_handle import export
 from camera_handle import camera_control
-import time
+# import time
         
 if __name__ == '__main__':
     camera_lock=Lock()
@@ -13,7 +13,6 @@ if __name__ == '__main__':
 
     # Start both processes
     flask_process.start()
-    time.sleep(10)
     camera_process.start()
     export_process.start()
 
