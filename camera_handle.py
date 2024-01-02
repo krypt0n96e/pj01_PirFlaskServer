@@ -38,16 +38,18 @@ def capture_images(output_folder):
         if start_capture_time > 0:
             count += 1
             current_time_str = time.strftime("%Y-%m-%d %H-%M-%S")
-            output_file = f'{output_folder}/{count}.PNG'
+            output_file = f'{output_folder}/{count}jpg'
 
+            resized_frame = cv2.resize(frame, (640, 480))
+            
             # Hiển thị thời gian trên ảnh
-            cv2.putText(frame, current_time_str, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            cv2.putText(resized_frame, current_time_str, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
             # Lưu ảnh vào thư mục
-            cv2.imwrite(output_file, frame)
+            cv2.imwrite(output_file, resized_frame)
 
             # Hiển thị ảnh trong cửa sổ
-            cv2.imshow('Captured Image', frame)
+            cv2.imshow('Captured Image', resized_frame)
 
             # Đặt lại thời gian bắt đầu cho frame tiếp theo
             start_time = time.time()
@@ -59,7 +61,7 @@ def capture_images(output_folder):
         if not camera_log:
             break
         # Kiểm tra phím 'q' để thoát
-        if cv2.waitKey(1) == ord('q'):
+        if cv2.waitKey(33) == ord('q'):
             break
 
     # Giải phóng tài nguyên khi kết thúc
