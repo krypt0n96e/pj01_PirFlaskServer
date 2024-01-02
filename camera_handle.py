@@ -140,4 +140,3 @@ def camera_control():
 
             # capture_images(output_folder)
             record_video(output_folder)
-camera_control()
