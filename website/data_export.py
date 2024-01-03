@@ -89,11 +89,11 @@ def export_csv():
                 csv_data.extend([(time, value) for time, value in processed_data])
 
             # Generate a timestamp for the filename
-            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+            timestamp = datetime.now().strftime('%Y_%m_%d %H_%M_%S')
 
             # Define the folder path based on the Mac address
             # export_folder = os.path.join('export_data', f'device_{device.id}')
-            export_folder = os.path.join('export_data', f'{device.mac_adr}')
+            export_folder = os.path.join('export_data', f'{device.mac_adr.replace(":", "")}')
 
             # Ensure the export folder exists
             os.makedirs(export_folder, exist_ok=True)

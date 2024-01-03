@@ -68,7 +68,7 @@ def capture_images(output_folder):
 def record_video(output_folder):
     # Mở webcam
     cap = cv2.VideoCapture(0)
-    
+    start_time=time.time()
 
     # Kiểm tra xem webcam có được mở không
     if not cap.isOpened():
@@ -77,17 +77,19 @@ def record_video(output_folder):
 
     # Lấy thông số của video từ webcam
     # fps = cap.get(cv2.CAP_PROP_FPS)
-    fps = 15
+    fps = 10
     delay = int(1000 / fps)  # Thời gian chờ tính theo milliseconds 
 
     # Lấy thông số của video từ webcam
     frame_width = int(cap.get(3))
+    print(frame_width)
     frame_height = int(cap.get(4))
+    print(frame_height)
 
     # Tạo đối tượng VideoWriter với tốc độ khung hình giảm xuống 10.0
-    output_file = f'{output_folder}/record_{time.strftime("%Y_%m_%d %H_%M_%S")}.mp4'
+    output_file = f'{output_folder}/record_{time.strftime("%Y_%m_%d %H_%M_%S")}.avi'
     # out = cv2.VideoWriter(output_file, cv2.VideoWriter_fourcc(*'XVID'), fps, (frame_width, frame_height))
-    out = cv2.VideoWriter(output_file, cv2.VideoWriter_fourcc(*'mp4v'), fps, (frame_width , frame_height))
+    out = cv2.VideoWriter(output_file, cv2.VideoWriter_fourcc(*'XVID'), fps, (frame_width , frame_height))
 
 
     # Bắt đầu quay và ghi video
@@ -111,16 +113,12 @@ def record_video(output_folder):
         # Hiển thị video trong cửa sổ
         cv2.imshow('Recording Video', frame)
 
-        # Kiểm tra phím 'q' để thoát
-        if cv2.waitKey(delay) == ord('q'):
-            break
-
         with app.app_context():
             camera = camera1.query.filter_by(id=camera_id).first()
             camera_log = camera.logs
 
-        # Kiểm tra nếu log bằng 0 thì dừng ghi video
-        if not camera_log:
+        # Kiểm tra fdieu kien dừng ghi video
+        if not camera_log or (cv2.waitKey(delay) == ord('q')) or (time.time()-start_time>3600):
             break
 
     # Giải phóng tài nguyên khi kết thúc
